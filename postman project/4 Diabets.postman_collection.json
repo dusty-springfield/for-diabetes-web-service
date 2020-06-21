@@ -1,0 +1,1421 @@
+{
+	"info": {
+		"_postman_id": "a52cf95f-5e3e-48ff-9e6c-842ac044c398",
+		"name": "4 Diabets",
+		"description": "Admin:\t\nemail=admin\npassword=admin\n\n\n{{variable}} - Переменная, куда ставится конкретное значение\n\nbaseUrL=52.169.18.211\n\n\nОбщая рекомендация - после запроса проверять HttpStatus, в случае HttpStatus.BAD_REQUEST смотреть поле \"status\" ответа.\n\nПри успешном добавления новой записи об отслеживаемых параметрах (ХЕ, сахар и тп) в ответе сервера в поле \"id\" будет сожержаться id новой записи. Его необходимо сохранить, тк по id записи в дальнешем можно будет ее редактировать\n\n",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "General",
+			"item": [
+				{
+					"name": "Get Home",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "Проверить, работает ли приложение на сервере"
+					},
+					"response": []
+				},
+				{
+					"name": "Register new user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a52217c7-7741-44b3-bb8f-7ce5c018f7a5",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/registration",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"registration"
+							]
+						},
+						"description": "Регистрация нового пользователя"
+					},
+					"response": [
+						{
+							"name": "Register new user",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\" : \"{{password}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/registration",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"registration"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n    \"status\": \"Ok\"\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Authenticate user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1855926c-eb33-4c49-be9c-bd1829718d85",
+								"exec": [
+									"try {",
+									"    pm.environment.set(\"token\", pm.response.json().jwt);",
+									"} catch(e) {",
+									"    console.log(e);",
+									"}",
+									"",
+									"",
+									"pm.test(\"Authenticate token not empty\", function () {",
+									"    r = pm.response.json();",
+									"    pm.expect(r).to.have.property(\"jwt\");",
+									"    pm.expect(r.jwt).not.eql(null);",
+									"    pm.expect(r.jwt).to.be.a(\"string\");",
+									"    pm.expect(r.jwt).not.eq(undefined);",
+									"    pm.expect(pm.environment.get(\"token\")).not.eq(undefined);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "993199f4-25b8-48f9-9a5c-2cb81deae3cd",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/authentication",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"authentication"
+							]
+						},
+						"description": "Аутентификация пользователя. В ответ приходит токен. Его необходимо передавать в header \"Authorization\" в последующих запросах, требующих аутентификацию"
+					},
+					"response": [
+						{
+							"name": "Authenticate user",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"username\" : \"admin\",\n\t\"password\" : \"admin\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/authentication",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"authentication"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 09 Mar 2020 10:35:19 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"jwt\": \"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4Mzc1MTMxOSwiaWF0IjoxNTgzNzUwMTE5fQ.9H-_wqv89U1pR-BpiFRqBF8FK6dyzvsEMk8zQQoVpzY\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Reset user password",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\" : \"{{email}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/registration/password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"registration",
+								"password"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "User information",
+					"item": [
+						{
+							"name": "Update user details",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"surname\": \"{{surname}}\",\r\n    \"name\": \"{{name}}\",\r\n    \"weight\": {{weight}},\r\n    \"height\": {{height}},\r\n    \"yearOfBirth\": {{yearOfBirth}}\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/user/details",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user",
+										"details"
+									]
+								},
+								"description": "Изменяет дополнительную информацию о пользователе, которая не влияет на аутентификацию (фамилия, имя, вес, год рождения)"
+							},
+							"response": []
+						},
+						{
+							"name": "Get user info",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "7c0fd5d8-4c5a-4de6-bb63-feb5f79e1c4c",
+										"exec": [
+											"var profile = pm.response.json().profile;\r",
+											"\r",
+											"var jsonData = JSON.parse(responseBody);\r",
+											"\r",
+											"var scheme1 = {\r",
+											"    \"type\": \"object\",\r",
+											"    \"properties\": {\r",
+											"        \"id\": {\"type\": \"integer\"},\r",
+											"        \"email\": {\"type\": \"string\"},\r",
+											"        \"enabled\": {\"type\": \"boolean\"},\r",
+											"        \"registrationDate\": {\"type\": \"integer\"},\r",
+											"        \"userDetailsDto\": {\r",
+											"            \"type\": \"object\",\r",
+											"            \"properties\": {\r",
+											"                \"id\": {\"type\": \"integer\"},\r",
+											"                \"surname\": {\"type\": \"string\"},\r",
+											"                \"name\": {\"type\": \"string\"},\r",
+											"                \"weight\": {\"type\": \"number\"},\r",
+											"                \"height\": {\"type\": \"number\"},\r",
+											"                \"yearOfBirth\": {\"type\": \"integer\"},\r",
+											"                \"modified\": {\"type\": \"integer\"},\r",
+											"            }\r",
+											"        }\r",
+											"    }\r",
+											"};\r",
+											"\r",
+											"pm.test('User info schema is valid', function() {\r",
+											"     pm.response.to.have.jsonSchema(scheme1);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/user",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user"
+									]
+								},
+								"description": "Возвращает основную информацию о пользователе"
+							},
+							"response": [
+								{
+									"name": "Get user info",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{token}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/user",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"user"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1; mode=block"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 09 Mar 2020 12:54:26 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"id\": 2,\n    \"email\": \"user\",\n    \"enabled\": true,\n    \"registrationDate\": \"2020-03-09\",\n    \"userDetailsDto\": {\n        \"id\": 1,\n        \"surname\": \"Surname\",\n        \"name\": \"Name\",\n        \"weight\": 75.5,\n        \"yearOfBirth\": 2020,\n        \"modified\": \"2020-03-09\"\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "Update user email",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"email\": \"{{email}}\" \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/user/email",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user",
+										"email"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update user password",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"password\": \"{{password}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/user/password",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user",
+										"password"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "User Record",
+					"item": [
+						{
+							"name": "Get all user records",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/user/record",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user",
+										"record"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Get all user records",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"type": "text",
+												"value": "Bearer {{token}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/user/record",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"user",
+												"record"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1; mode=block"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 09 Mar 2020 14:30:05 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 1,\n        \"recordTypeId\": 1,\n        \"value\": 5.05,\n        \"date\": \"2020-03-09T14:29:25.918+0000\"\n    },\n    {\n        \"id\": 2,\n        \"recordTypeId\": 1,\n        \"value\": 3.05,\n        \"date\": \"2020-03-09T14:29:36.297+0000\"\n    },\n    {\n        \"id\": 3,\n        \"recordTypeId\": 2,\n        \"value\": 3.45,\n        \"date\": \"2020-03-09T14:29:55.830+0000\"\n    }\n]"
+								}
+							]
+						},
+						{
+							"name": "Post new record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "3b628843-b648-4c8f-8cc6-7082c4cc648e",
+										"exec": [
+											"pm.test(\"Record id is correct integer\", function () {\r",
+											"    data = pm.response.json();\r",
+											"    pm.expect(data).to.have.property(\"id\");\r",
+											"    pm.expect(data.id).not.eql(null);\r",
+											"    pm.expect(data.id).to.be.a(\"number\");\r",
+											"    pm.expect(data.id).be.above(0);\r",
+											"    pm.expect(data.id).not.eq(undefined);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json; charset=UTF-8",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"recordTypeId\" : {{recordTypeId}},\n\t\"value\" : {{value}},\n\t\"date\" : {{date}},\n\t\"description\" : \"{{description}}\"\n}",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/user/record",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user",
+										"record"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Post new record",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{token}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"recordTypeId\" : {{recordTypeId}},\n\t\"value\" : 5.85\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/user/record",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"user",
+												"record"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1; mode=block"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 09 Mar 2020 14:42:05 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"id\": 6,\n    \"status\": \"Record added\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Update user record",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"value\" : {{value}},\n\t\"date\" : {{date}},\n\t\"description\" : {{description}}\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/user/record/{{recordId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user",
+										"record",
+										"{{recordId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete all user's records",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/user/record",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user",
+										"record"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete user's record",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/user/record/{{recordId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user",
+										"record",
+										"{{recordId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "User Information",
+					"item": [
+						{
+							"name": "Get all users",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/admin/user",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"user"
+									]
+								},
+								"description": "Получить всех пользователей"
+							},
+							"response": [
+								{
+									"name": "Get all users",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{token}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/admin/user",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"user"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1; mode=block"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 09 Mar 2020 14:50:07 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 1,\n        \"email\": \"admin\",\n        \"enabled\": true,\n        \"registrationDate\": \"2020-03-09\",\n        \"userDetailsDto\": null\n    },\n    {\n        \"id\": 2,\n        \"email\": \"user\",\n        \"enabled\": true,\n        \"registrationDate\": \"2020-03-09\",\n        \"userDetailsDto\": {\n            \"id\": 1,\n            \"surname\": \"Surname\",\n            \"name\": \"Name\",\n            \"weight\": 75.5,\n            \"yearOfBirth\": 2020,\n            \"modified\": \"2020-03-09\"\n        }\n    },\n    {\n        \"id\": 3,\n        \"email\": \"user_2\",\n        \"enabled\": true,\n        \"registrationDate\": \"2020-03-09\",\n        \"userDetailsDto\": null\n    }\n]"
+								}
+							]
+						},
+						{
+							"name": "Get user by id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/admin/user/{{userId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"user",
+										"{{userId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Records",
+					"item": [
+						{
+							"name": "Get all records",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/admin/record",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"record"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Get all records",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"type": "text",
+												"value": "Bearer {{token}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/admin/record",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"record"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1; mode=block"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 09 Mar 2020 14:33:39 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 1,\n        \"recordTypeId\": 1,\n        \"value\": 5.05,\n        \"date\": \"2020-03-09T14:29:25.918+0000\"\n    },\n    {\n        \"id\": 2,\n        \"recordTypeId\": 1,\n        \"value\": 3.05,\n        \"date\": \"2020-03-09T14:29:36.297+0000\"\n    },\n    {\n        \"id\": 3,\n        \"recordTypeId\": 2,\n        \"value\": 3.45,\n        \"date\": \"2020-03-09T14:29:55.830+0000\"\n    },\n    {\n        \"id\": 4,\n        \"recordTypeId\": 2,\n        \"value\": 3.85,\n        \"date\": \"2020-03-09T14:31:17.354+0000\"\n    },\n    {\n        \"id\": 5,\n        \"recordTypeId\": 3,\n        \"value\": 5.85,\n        \"date\": \"2020-03-09T14:31:32.384+0000\"\n    }\n]"
+								}
+							]
+						},
+						{
+							"name": "Get all user's records",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/admin/record/user/{{userId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"record",
+										"user",
+										"{{userId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get record",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/admin/record/{{recordId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"record",
+										"{{recordId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all types of records",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/admin/record/type",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"record",
+										"type"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Get all types of records",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"type": "text",
+												"value": "Bearer {{token}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/admin/record/type",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"record",
+												"type"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1; mode=block"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 09 Mar 2020 14:34:39 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 1,\n        \"type\": \"CARBOHYDRATE\"\n    },\n    {\n        \"id\": 3,\n        \"type\": \"GLUCOSE\"\n    },\n    {\n        \"id\": 2,\n        \"type\": \"INSULIN\"\n    }\n]"
+								}
+							]
+						},
+						{
+							"name": "Get type of record",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/admin/record/type/{{recordTypeId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"record",
+										"type",
+										"{{recordTypeId}}"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Get type of record",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"type": "text",
+												"value": "Bearer {{token}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/admin/record/type/{{recordTypeId}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"record",
+												"type",
+												"{{recordTypeId}}"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1; mode=block"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 09 Mar 2020 15:05:38 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"id\": 3,\n    \"type\": \"GLUCOSE\"\n}"
+								}
+							]
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "d473f6c1-bb65-4423-b502-17cd14f3b7e5",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "a4124167-ee54-4e28-b718-208408a7a0be",
+				"type": "text/javascript",
+				"exec": [
+					"pm.test(\"Status is ok, response is json\", function () {",
+					"    pm.response.to.be.ok;",
+					"    pm.response.to.be.json;",
+					"});"
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
